@@ -1,4 +1,4 @@
-package ru.yandex.practicum.catsgram.controller.model;
+package ru.yandex.practicum.catsgram.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
