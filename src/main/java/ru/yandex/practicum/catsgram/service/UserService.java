@@ -56,6 +56,12 @@ public class UserService {
         return existingUser;
     }
 
+    public Optional<User> findUserById(long postId) {
+        return users.values().stream()
+                .filter(user -> user.getId() == postId)
+                .findFirst();
+    }
+
     private long getNextId() {
         long currentMaxId = users.keySet()
                 .stream()
@@ -63,10 +69,6 @@ public class UserService {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
-    }
-
-    public Optional<User> findUserById(long id) {
-        return Optional.ofNullable(users.get(id));
     }
 }
 
