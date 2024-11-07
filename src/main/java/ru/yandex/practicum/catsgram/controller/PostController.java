@@ -1,48 +1,44 @@
 package ru.yandex.practicum.catsgram.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.catsgram.model.Post;
-import ru.yandex.practicum.catsgram.model.SortOrder;
+import ru.yandex.practicum.catsgram.dto.NewPostRequest;
+import ru.yandex.practicum.catsgram.dto.PostDto;
+import ru.yandex.practicum.catsgram.dto.UpdatePostRequest;
 import ru.yandex.practicum.catsgram.service.PostService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
     private final PostService postService;
 
-    @Autowired
-    public PostController(PostService postService) {
-        this.postService = postService;
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PostDto createPost(@RequestBody NewPostRequest postRequest) {
+        return postService.createPost(postRequest);
+    }
+
+    @PutMapping("/{postId}")
+    public PostDto updatePost(@PathVariable("postId") long postId, @RequestBody UpdatePostRequest request) {
+        return postService.updatePost(postId, request);
     }
 
     @GetMapping
-    public List<Post> findAll(
+    @ResponseStatus(HttpStatus.OK)
+    public List<PostDto> getPosts(
             @RequestParam(defaultValue = "desc") String sort,
             @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size
-    ) {
-        SortOrder sortOrder = SortOrder.from(sort);
-        return postService.findAll(from, size, sortOrder);
+            @RequestParam(defaultValue = "10") Integer size) {
+        return postService.getPosts();
     }
 
-    @GetMapping("/{id}")
-    public Optional findById(@PathVariable long id) {
-        return Optional.ofNullable(postService.findPostById(id));
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Post create(@RequestBody Post post) {
-        return postService.create(post);
-    }
-
-    @PutMapping
-    public Post update(@RequestBody Post newPost) {
-        return postService.update(newPost);
+    @GetMapping("/{postId}")
+    @ResponseStatus(HttpStatus.OK)
+    public PostDto getPostById(@PathVariable("postId") long postId) {
+        return postService.getPostById(postId);
     }
 }
